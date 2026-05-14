@@ -258,3 +258,11 @@ body {
 .danger-button:hover {
   background: rgba(255, 120, 120, 0.2);
 }
+
+/* Selected node styling */
+
+.selected-node {
+  stroke: #ffd166;
+  stroke-width: 5;
+  filter: drop-shadow(0 0 12px rgba(255, 209, 102, 0.75));
+}

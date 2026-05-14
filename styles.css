@@ -54,7 +54,12 @@ body {
 /* Node styles */
 
 .node {
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+}
+
+.node:active {
+  cursor: grabbing;
 }
 
 .node-circle {
@@ -150,7 +155,6 @@ body {
 /* Add person form styles */
 
 .person-form {
-  margin-top: 2rem;
   display: grid;
   gap: 0.7rem;
 }
@@ -199,7 +203,6 @@ body {
 /* Connection form styles */
 
 .link-form {
-  margin-top: 2rem;
   display: grid;
   gap: 0.7rem;
 }
@@ -265,4 +268,66 @@ body {
   stroke: #ffd166;
   stroke-width: 5;
   filter: drop-shadow(0 0 12px rgba(255, 209, 102, 0.75));
+}
+
+/* Reset layout button styling */
+
+.secondary-button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f5f5;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Drop down form styling */
+.form-toggle {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.form-toggle summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #f5f5f5;
+  list-style: none;
+}
+
+.form-toggle summary::-webkit-details-marker {
+  display: none;
+}
+
+.form-toggle summary::after {
+  content: "+";
+  float: right;
+  color: #ffd166;
+  font-weight: 800;
+}
+
+.form-toggle[open] summary {
+  margin-bottom: 1rem;
+}
+
+.form-toggle[open] summary::after {
+  content: "–";
+}
+
+/* Edit button styling */
+
+.details-actions {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }

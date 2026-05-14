@@ -9,6 +9,7 @@ const personClosenessInput = document.querySelector("#person-closeness");
 const personStatusInput = document.querySelector("#person-status");
 const personNotesInput = document.querySelector("#person-notes");
 const personSubmitButton = addPersonForm.querySelector("button[type='submit']");
+const cancelEditButton = document.querySelector("#cancel-edit-button");
 
 const addLinkForm = document.querySelector("#add-link-form");
 
@@ -318,6 +319,7 @@ function startEditingPerson(personId) {
   personNotesInput.value = person.notes;
 
   personSubmitButton.textContent = "Save changes";
+  cancelEditButton.hidden = false;
 
   const formToggle = addPersonForm.closest(".form-toggle");
 
@@ -405,6 +407,14 @@ function renderMap() {
   updatePersonSelects();
 }
 
+function stopEditingPerson() {
+  editingPersonId = null;
+
+  addPersonForm.reset();
+  personSubmitButton.textContent = "Add person";
+  cancelEditButton.hidden = true;
+}
+
 addPersonForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -423,11 +433,9 @@ addPersonForm.addEventListener("submit", function (event) {
     person.status = formData.get("status") || "not specified";
     person.notes = formData.get("notes") || "No notes added yet.";
 
-    editingPersonId = null;
-    personSubmitButton.textContent = "Add person";
+    stopEditingPerson();
 
     savePeople();
-    addPersonForm.reset();
     showPersonDetails(person);
     renderMap();
 
@@ -515,6 +523,7 @@ svg.addEventListener("pointerleave", function () {
 });
 
 resetLayoutButton.addEventListener("click", resetLayout);
+cancelEditButton.addEventListener("click", stopEditingPerson);
 
 loadPeople();
 loadLinks();

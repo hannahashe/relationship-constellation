@@ -71,3 +71,15 @@ body {
   stroke: rgba(255, 255, 255, 0.25);
   stroke-width: 2;
 }
+
+.category-partner {
+  fill: #ff8fab;
+}
+
+.category-family {
+  fill: #90dbf4;
+}
+
+.category-friend {
+  fill: #b9fbc0;
+}

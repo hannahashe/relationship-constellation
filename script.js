@@ -18,6 +18,7 @@ const linkTargetSelect = document.querySelector("#link-target");
 const linkTypeInput = document.querySelector("#link-type");
 const linkStrengthInput = document.querySelector("#link-strength");
 const linkSubmitButton = addLinkForm.querySelector("button[type='submit']");
+const cancelLinkEditButton = document.querySelector("#cancel-link-edit-button");
 
 const resetLayoutButton = document.querySelector("#reset-layout-button");
 
@@ -450,6 +451,7 @@ function startEditingLink(linkId) {
   linkStrengthInput.value = link.strength || 3;
 
   linkSubmitButton.textContent = "Save connection";
+  cancelLinkEditButton.hidden = false;
 
   const formToggle = addLinkForm.closest(".form-toggle");
 
@@ -602,6 +604,14 @@ addPersonForm.addEventListener("submit", function (event) {
   renderMap();
 });
 
+function stopEditingLink() {
+  editingLinkId = null;
+
+  addLinkForm.reset();
+  linkSubmitButton.textContent = "Add connection";
+  cancelLinkEditButton.hidden = true;
+}
+
 addLinkForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -626,11 +636,9 @@ addLinkForm.addEventListener("submit", function (event) {
     link.type = formData.get("type") || "connection";
     link.strength = Number(formData.get("strength"));
 
-    editingLinkId = null;
-    linkSubmitButton.textContent = "Add connection";
+    stopEditingLink();
 
     saveLinks();
-    addLinkForm.reset();
     showLinkDetails(link);
     renderMap();
 
@@ -687,6 +695,7 @@ svg.addEventListener("pointerleave", function () {
 
 resetLayoutButton.addEventListener("click", resetLayout);
 cancelEditButton.addEventListener("click", stopEditingPerson);
+cancelLinkEditButton.addEventListener("click", stopEditingLink);
 
 loadPeople();
 loadLinks();

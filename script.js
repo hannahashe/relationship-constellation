@@ -1,6 +1,10 @@
 const svg = document.querySelector("#constellation-map");
 const detailsPanel = document.querySelector("#details-panel");
 const addPersonForm = document.querySelector("#add-person-form");
+const addLinkForm = document.querySelector("#add-link-form");
+const linkSourceSelect = document.querySelector("#link-source");
+const linkTargetSelect = document.querySelector("#link-target");
+let selectedPersonId = null;
 
 const me = {
   id: "me",
@@ -57,6 +61,8 @@ let people = [
   },
 ];
 
+let links = [];
+
 function createSvgElement(tagName, attributes = {}) {
   const element = document.createElementNS(
     "http://www.w3.org/2000/svg",
@@ -85,6 +91,18 @@ function loadPeople() {
   }
 }
 
+function saveLinks() {
+  localStorage.setItem("relationshipConstellationLinks", JSON.stringify(links));
+}
+
+function loadLinks() {
+  const savedLinks = localStorage.getItem("relationshipConstellationLinks");
+
+  if (savedLinks) {
+    links = JSON.parse(savedLinks);
+  }
+}
+
 function getRandomOrbitPosition() {
   const angle = Math.random() * Math.PI * 2;
   const distanceFromCentre = 170 + Math.random() * 130;
@@ -95,19 +113,84 @@ function getRandomOrbitPosition() {
   };
 }
 
-function renderLine(source, target) {
+function updatePersonSelects() {
+  const defaultOption = '<option value="">Choose a person</option>';
+
+  linkSourceSelect.innerHTML = defaultOption;
+  linkTargetSelect.innerHTML = defaultOption;
+
+  people.forEach(function (person) {
+    const sourceOption = new Option(person.name, person.id);
+    const targetOption = new Option(person.name, person.id);
+
+    linkSourceSelect.appendChild(sourceOption);
+    linkTargetSelect.appendChild(targetOption);
+  });
+}
+
+function findPersonById(id) {
+  return people.find(function (person) {
+    return person.id === id;
+  });
+}
+
+function renderLine(
+  source,
+  target,
+  className = "connection-line",
+  extraAttributes = {},
+) {
   const line = createSvgElement("line", {
     x1: source.x,
     y1: source.y,
     x2: target.x,
     y2: target.y,
-    class: "connection-line",
+    class: className,
+    ...extraAttributes,
   });
 
   svg.appendChild(line);
 }
 
+function deletePerson(personId) {
+  const personToDelete = findPersonById(personId);
+
+  if (!personToDelete) {
+    return;
+  }
+
+  const confirmed = confirm(
+    `Delete ${personToDelete.name} from your constellation?`,
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  people = people.filter(function (person) {
+    return person.id !== personId;
+  });
+
+  links = links.filter(function (link) {
+    return link.sourceId !== personId && link.targetId !== personId;
+  });
+
+  selectedPersonId = null;
+
+  savePeople();
+  saveLinks();
+
+  detailsPanel.innerHTML = `
+    <h2>Selected person</h2>
+    <p>Click a person on the map to see details here.</p>
+  `;
+
+  renderMap();
+}
+
 function showPersonDetails(person) {
+  selectedPersonId = person.id;
+
   detailsPanel.innerHTML = `
     <h2>${person.name}</h2>
     <dl>
@@ -131,7 +214,17 @@ function showPersonDetails(person) {
         <dd>${person.notes}</dd>
       </div>
     </dl>
+
+    <button id="delete-person-button" class="danger-button">
+      Delete person
+    </button>
   `;
+
+  const deleteButton = document.querySelector("#delete-person-button");
+
+  deleteButton.addEventListener("click", function () {
+    deletePerson(person.id);
+  });
 }
 
 function renderNode(person, isMe = false) {
@@ -175,11 +268,27 @@ function renderMap() {
     renderLine(me, person);
   });
 
+  links.forEach(function (link) {
+    const source = findPersonById(link.sourceId);
+    const target = findPersonById(link.targetId);
+
+    if (source && target) {
+      const strength = link.strength || 3;
+
+      renderLine(source, target, "person-connection-line", {
+        "stroke-width": strength,
+        opacity: 0.25 + strength * 0.12,
+      });
+    }
+  });
+
   renderNode(me, true);
 
   people.forEach(function (person) {
     renderNode(person);
   });
+
+  updatePersonSelects();
 }
 
 addPersonForm.addEventListener("submit", function (event) {
@@ -206,5 +315,32 @@ addPersonForm.addEventListener("submit", function (event) {
   renderMap();
 });
 
+addLinkForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const formData = new FormData(addLinkForm);
+  const sourceId = formData.get("sourceId");
+  const targetId = formData.get("targetId");
+
+  if (sourceId === targetId) {
+    alert("Please choose two different people.");
+    return;
+  }
+
+  const newLink = {
+    id: crypto.randomUUID(),
+    sourceId: sourceId,
+    targetId: targetId,
+    type: formData.get("type") || "connection",
+    strength: Number(formData.get("strength")),
+  };
+
+  links.push(newLink);
+  saveLinks();
+  addLinkForm.reset();
+  renderMap();
+});
+
 loadPeople();
+loadLinks();
 renderMap();

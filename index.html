@@ -13,7 +13,7 @@
         <p class="intro">
           A personal map of people, relationships, and connections.
         </p>
-
+        <!-- Add person form -->
         <form id="add-person-form" class="person-form">
           <h2>Add person</h2>
 
@@ -59,6 +59,42 @@
           <button type="submit">Add person</button>
         </form>
 
+        <!-- Add connection form -->
+
+        <form id="add-link-form" class="link-form">
+          <h2>Add connection</h2>
+
+          <label for="link-source">Person 1</label>
+          <select id="link-source" name="sourceId" required>
+            <option value="">Choose a person</option>
+          </select>
+
+          <label for="link-target">Person 2</label>
+          <select id="link-target" name="targetId" required>
+            <option value="">Choose a person</option>
+          </select>
+
+          <label for="link-type">Connection type</label>
+          <input
+            id="link-type"
+            name="type"
+            type="text"
+            placeholder="e.g. friends, family, housemates"
+          />
+
+          <label for="link-strength">Connection strength</label>
+          <select id="link-strength" name="strength" required>
+            <option value="1">1 - loose / distant</option>
+            <option value="2">2 - light connection</option>
+            <option value="3" selected>3 - medium connection</option>
+            <option value="4">4 - strong connection</option>
+            <option value="5">5 - very strong connection</option>
+          </select>
+
+          <button type="submit">Add connection</button>
+        </form>
+
+        <!-- Details panel -->
         <div id="details-panel" class="details-panel">
           <h2>Selected person</h2>
           <p>Click a person on the map to see details here.</p>

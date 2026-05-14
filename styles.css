@@ -348,3 +348,76 @@ body {
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
+
+/* Legend styles */
+.legend {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.legend h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.legend-item,
+.legend-line-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+  color: #c9c9d6;
+  font-size: 0.9rem;
+}
+
+.legend-item:last-child,
+.legend-line-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  flex: 0 0 auto;
+}
+
+.legend-partner {
+  background: #ff8fab;
+}
+
+.legend-family {
+  background: #90dbf4;
+}
+
+.legend-friend {
+  background: #b9fbc0;
+}
+
+.legend-work {
+  background: #cdb4db;
+}
+
+.legend-community {
+  background: #a0c4ff;
+}
+
+.legend-other {
+  background: #d8e2dc;
+}
+
+.legend-line {
+  width: 32px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  flex: 0 0 auto;
+}
+
+.legend-line-person {
+  background: transparent;
+  border-top: 3px dashed rgba(255, 209, 102, 0.8);
+}

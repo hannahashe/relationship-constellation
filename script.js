@@ -1,10 +1,23 @@
 const svg = document.querySelector("#constellation-map");
 const detailsPanel = document.querySelector("#details-panel");
+
 const addPersonForm = document.querySelector("#add-person-form");
+
+const personNameInput = document.querySelector("#person-name");
+const personCategoryInput = document.querySelector("#person-category");
+const personClosenessInput = document.querySelector("#person-closeness");
+const personStatusInput = document.querySelector("#person-status");
+const personNotesInput = document.querySelector("#person-notes");
+const personSubmitButton = addPersonForm.querySelector("button[type='submit']");
+
 const addLinkForm = document.querySelector("#add-link-form");
+
 const linkSourceSelect = document.querySelector("#link-source");
 const linkTargetSelect = document.querySelector("#link-target");
+const resetLayoutButton = document.querySelector("#reset-layout-button");
+
 let selectedPersonId = null;
+let editingPersonId = null;
 let draggedPersonId = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -114,6 +127,34 @@ function getRandomOrbitPosition() {
     x: me.x + Math.cos(angle) * distanceFromCentre,
     y: me.y + Math.sin(angle) * distanceFromCentre,
   };
+}
+
+function resetLayout() {
+  const confirmed = confirm("Reset everyone into a fresh orbit around Me?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  people = people.map(function (person) {
+    const position = getRandomOrbitPosition();
+
+    return {
+      ...person,
+      x: position.x,
+      y: position.y,
+    };
+  });
+
+  selectedPersonId = null;
+  savePeople();
+
+  detailsPanel.innerHTML = `
+    <h2>Selected person</h2>
+    <p>Click a person on the map to see details here.</p>
+  `;
+
+  renderMap();
 }
 
 function updatePersonSelects() {
@@ -238,16 +279,51 @@ function showPersonDetails(person) {
       </div>
     </dl>
 
-    <button id="delete-person-button" class="danger-button">
-      Delete person
-    </button>
+    <div class="details-actions">
+      <button id="edit-person-button" class="secondary-button" type="button">
+        Edit person
+      </button>
+
+      <button id="delete-person-button" class="danger-button" type="button">
+        Delete person
+      </button>
+    </div>
   `;
 
   const deleteButton = document.querySelector("#delete-person-button");
+  const editButton = document.querySelector("#edit-person-button");
+
+  editButton.addEventListener("click", function () {
+    startEditingPerson(person.id);
+  });
 
   deleteButton.addEventListener("click", function () {
     deletePerson(person.id);
   });
+}
+
+function startEditingPerson(personId) {
+  const person = findPersonById(personId);
+
+  if (!person) {
+    return;
+  }
+
+  editingPersonId = person.id;
+
+  personNameInput.value = person.name;
+  personCategoryInput.value = person.category;
+  personClosenessInput.value = person.closeness;
+  personStatusInput.value = person.status;
+  personNotesInput.value = person.notes;
+
+  personSubmitButton.textContent = "Save changes";
+
+  const formToggle = addPersonForm.closest(".form-toggle");
+
+  if (formToggle) {
+    formToggle.open = true;
+  }
 }
 
 function renderNode(person, isMe = false) {
@@ -280,7 +356,17 @@ function renderNode(person, isMe = false) {
   group.appendChild(label);
 
   if (!isMe) {
-    group.addEventListener("click", function () {
+    group.addEventListener("pointerdown", function (event) {
+      const svgPoint = getSvgPoint(event);
+
+      draggedPersonId = person.id;
+      selectedPersonId = person.id;
+
+      dragOffsetX = svgPoint.x - person.x;
+      dragOffsetY = svgPoint.y - person.y;
+
+      group.setPointerCapture(event.pointerId);
+
       showPersonDetails(person);
       renderMap();
     });
@@ -323,6 +409,31 @@ addPersonForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
   const formData = new FormData(addPersonForm);
+
+  if (editingPersonId) {
+    const person = findPersonById(editingPersonId);
+
+    if (!person) {
+      return;
+    }
+
+    person.name = formData.get("name");
+    person.category = formData.get("category");
+    person.closeness = Number(formData.get("closeness"));
+    person.status = formData.get("status") || "not specified";
+    person.notes = formData.get("notes") || "No notes added yet.";
+
+    editingPersonId = null;
+    personSubmitButton.textContent = "Add person";
+
+    savePeople();
+    addPersonForm.reset();
+    showPersonDetails(person);
+    renderMap();
+
+    return;
+  }
+
   const position = getRandomOrbitPosition();
 
   const newPerson = {
@@ -368,6 +479,42 @@ addLinkForm.addEventListener("submit", function (event) {
   addLinkForm.reset();
   renderMap();
 });
+
+svg.addEventListener("pointermove", function (event) {
+  if (!draggedPersonId) {
+    return;
+  }
+
+  const svgPoint = getSvgPoint(event);
+
+  updatePersonPosition(
+    draggedPersonId,
+    svgPoint.x - dragOffsetX,
+    svgPoint.y - dragOffsetY,
+  );
+
+  renderMap();
+});
+
+svg.addEventListener("pointerup", function () {
+  if (!draggedPersonId) {
+    return;
+  }
+
+  draggedPersonId = null;
+  savePeople();
+});
+
+svg.addEventListener("pointerleave", function () {
+  if (!draggedPersonId) {
+    return;
+  }
+
+  draggedPersonId = null;
+  savePeople();
+});
+
+resetLayoutButton.addEventListener("click", resetLayout);
 
 loadPeople();
 loadLinks();

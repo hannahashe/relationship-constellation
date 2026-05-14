@@ -5,6 +5,9 @@ const addLinkForm = document.querySelector("#add-link-form");
 const linkSourceSelect = document.querySelector("#link-source");
 const linkTargetSelect = document.querySelector("#link-target");
 let selectedPersonId = null;
+let draggedPersonId = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
 const me = {
   id: "me",
@@ -134,6 +137,26 @@ function findPersonById(id) {
   });
 }
 
+function getSvgPoint(event) {
+  const point = svg.createSVGPoint();
+
+  point.x = event.clientX;
+  point.y = event.clientY;
+
+  return point.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+function updatePersonPosition(personId, x, y) {
+  const person = findPersonById(personId);
+
+  if (!person) {
+    return;
+  }
+
+  person.x = x;
+  person.y = y;
+}
+
 function renderLine(
   source,
   target,
@@ -230,6 +253,7 @@ function showPersonDetails(person) {
 function renderNode(person, isMe = false) {
   const group = createSvgElement("g", {
     class: "node",
+    "data-id": person.id,
   });
 
   const categoryClass = person.category ? `category-${person.category}` : "";

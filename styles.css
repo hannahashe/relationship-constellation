@@ -90,6 +90,12 @@ body {
 .person-connection-line {
   stroke: rgba(255, 209, 102, 0.8);
   stroke-dasharray: 6 6;
+  cursor: pointer;
+}
+
+.selected-link {
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
 }
 
 .category-partner {

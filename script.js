@@ -13,6 +13,9 @@ const people = [
     id: "p1",
     name: "J",
     category: "partner",
+    closeness: 5,
+    status: "close / intense",
+    notes: "A very significant relationship in my daily life.",
     x: 560,
     y: 260,
     radius: 32
@@ -21,6 +24,9 @@ const people = [
     id: "p2",
     name: "M",
     category: "family",
+    closeness: 4,
+    status: "close / emotionally important",
+    notes: "Family connection with practical and emotional significance.",
     x: 260,
     y: 220,
     radius: 32
@@ -29,6 +35,9 @@ const people = [
     id: "p3",
     name: "A",
     category: "friend",
+    closeness: 3,
+    status: "uncertain / reconnecting",
+    notes: "A friendship I may want to understand more clearly.",
     x: 520,
     y: 420,
     radius: 32
@@ -37,6 +46,9 @@ const people = [
     id: "p4",
     name: "H",
     category: "friend",
+    closeness: 3,
+    status: "uncertain / reconnecting",
+    notes: "A friendship with some social/emotional complexity.",
     x: 280,
     y: 410,
     radius: 32

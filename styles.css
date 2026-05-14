@@ -82,6 +82,11 @@ body {
   stroke-width: 2;
 }
 
+.person-connection-line {
+  stroke: rgba(255, 209, 102, 0.8);
+  stroke-dasharray: 6 6;
+}
+
 .category-partner {
   fill: #ff8fab;
 }
@@ -189,4 +194,67 @@ body {
 
 .person-form button:hover {
   filter: brightness(1.05);
+}
+
+/* Connection form styles */
+
+.link-form {
+  margin-top: 2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.link-form h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.link-form label {
+  font-size: 0.85rem;
+  color: #c9c9d6;
+}
+
+.link-form input,
+.link-form select {
+  width: 100%;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: #10111a;
+  color: #f5f5f5;
+  font: inherit;
+}
+
+.link-form button {
+  margin-top: 0.4rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #8fa7ff;
+  color: #10111a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.link-form button:hover {
+  filter: brightness(1.05);
+}
+
+/* Delete person styling */
+
+.danger-button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(255, 120, 120, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 120, 120, 0.12);
+  color: #ffb4b4;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.danger-button:hover {
+  background: rgba(255, 120, 120, 0.2);
 }

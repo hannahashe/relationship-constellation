@@ -14,9 +14,49 @@
           A personal map of people, relationships, and connections.
         </p>
 
-        <button id="reset-layout-button" class="secondary-button">
-          Reset layout
-        </button>
+        <div class="legend">
+          <h2>Legend</h2>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-partner"></span>
+            <span>Partner</span>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-family"></span>
+            <span>Family</span>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-friend"></span>
+            <span>Friend</span>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-work"></span>
+            <span>Work</span>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-community"></span>
+            <span>Community</span>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot legend-other"></span>
+            <span>Other</span>
+          </div>
+
+          <div class="legend-line-item">
+            <span class="legend-line"></span>
+            <span>Direct connection to me</span>
+          </div>
+
+          <div class="legend-line-item">
+            <span class="legend-line legend-line-person"></span>
+            <span>Connection between people</span>
+          </div>
+        </div>
 
         <!-- Add person form -->
         <details class="form-toggle">
@@ -109,6 +149,10 @@
             <button type="submit">Add connection</button>
           </form>
         </details>
+
+        <button id="reset-layout-button" class="secondary-button">
+          Reset layout
+        </button>
 
         <!-- Details panel -->
         <div id="details-panel" class="details-panel">

@@ -53,6 +53,18 @@ function createSvgElement(tagName, attributes = {}) {
   return element;
 }
 
+function renderLine(source, target) {
+  const line = createSvgElement("line", {
+    x1: source.x,
+    y1: source.y,
+    x2: target.x,
+    y2: target.y,
+    class: "connection-line"
+  });
+
+  svg.appendChild(line);
+}
+
 function renderNode(person, isMe = false) {
   const group = createSvgElement("g", {
     class: "node"
@@ -80,6 +92,10 @@ function renderNode(person, isMe = false) {
 
 function renderMap() {
   svg.innerHTML = "";
+
+  people.forEach(function (person) {
+    renderLine(me, person);
+  });
 
   renderNode(me, true);
 

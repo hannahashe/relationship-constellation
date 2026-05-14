@@ -233,12 +233,15 @@ function renderNode(person, isMe = false) {
   });
 
   const categoryClass = person.category ? `category-${person.category}` : "";
+  const selectedClass = person.id === selectedPersonId ? "selected-node" : "";
 
   const circle = createSvgElement("circle", {
     cx: person.x,
     cy: person.y,
     r: person.radius,
-    class: isMe ? "node-circle me-circle" : `node-circle ${categoryClass}`,
+    class: isMe
+      ? "node-circle me-circle"
+      : `node-circle ${categoryClass} ${selectedClass}`,
   });
 
   const label = createSvgElement("text", {
@@ -255,6 +258,7 @@ function renderNode(person, isMe = false) {
   if (!isMe) {
     group.addEventListener("click", function () {
       showPersonDetails(person);
+      renderMap();
     });
   }
 

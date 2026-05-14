@@ -12,13 +12,20 @@ const personSubmitButton = addPersonForm.querySelector("button[type='submit']");
 const cancelEditButton = document.querySelector("#cancel-edit-button");
 
 const addLinkForm = document.querySelector("#add-link-form");
-
 const linkSourceSelect = document.querySelector("#link-source");
 const linkTargetSelect = document.querySelector("#link-target");
+
+const linkTypeInput = document.querySelector("#link-type");
+const linkStrengthInput = document.querySelector("#link-strength");
+const linkSubmitButton = addLinkForm.querySelector("button[type='submit']");
+
 const resetLayoutButton = document.querySelector("#reset-layout-button");
 
 let selectedPersonId = null;
 let editingPersonId = null;
+let selectedLinkId = null;
+let editingLinkId = null;
+
 let draggedPersonId = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -150,10 +157,7 @@ function resetLayout() {
   selectedPersonId = null;
   savePeople();
 
-  detailsPanel.innerHTML = `
-    <h2>Selected person</h2>
-    <p>Click a person on the map to see details here.</p>
-  `;
+  resetDetailsPanel();
 
   renderMap();
 }
@@ -170,6 +174,12 @@ function updatePersonSelects() {
 
     linkSourceSelect.appendChild(sourceOption);
     linkTargetSelect.appendChild(targetOption);
+  });
+}
+
+function findLinkById(id) {
+  return links.find(function (link) {
+    return link.id === id;
   });
 }
 
@@ -204,6 +214,7 @@ function renderLine(
   target,
   className = "connection-line",
   extraAttributes = {},
+  clickHandler = null,
 ) {
   const line = createSvgElement("line", {
     x1: source.x,
@@ -213,6 +224,10 @@ function renderLine(
     class: className,
     ...extraAttributes,
   });
+
+  if (clickHandler) {
+    line.addEventListener("click", clickHandler);
+  }
 
   svg.appendChild(line);
 }
@@ -245,16 +260,47 @@ function deletePerson(personId) {
   savePeople();
   saveLinks();
 
-  detailsPanel.innerHTML = `
-    <h2>Selected person</h2>
-    <p>Click a person on the map to see details here.</p>
-  `;
+  resetDetailsPanel();
 
+  renderMap();
+}
+
+function deleteLink(linkId) {
+  const linkToDelete = findLinkById(linkId);
+
+  if (!linkToDelete) {
+    return;
+  }
+
+  const source = findPersonById(linkToDelete.sourceId);
+  const target = findPersonById(linkToDelete.targetId);
+
+  const sourceName = source ? source.name : "this person";
+  const targetName = target ? target.name : "this person";
+
+  const confirmed = confirm(
+    `Delete the connection between ${sourceName} and ${targetName}?`,
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  links = links.filter(function (link) {
+    return link.id !== linkId;
+  });
+
+  selectedLinkId = null;
+  editingLinkId = null;
+
+  saveLinks();
+  resetDetailsPanel();
   renderMap();
 }
 
 function showPersonDetails(person) {
   selectedPersonId = person.id;
+  selectedLinkId = null;
 
   detailsPanel.innerHTML = `
     <h2>${person.name}</h2>
@@ -303,6 +349,67 @@ function showPersonDetails(person) {
   });
 }
 
+function showLinkDetails(link) {
+  selectedLinkId = link.id;
+  selectedPersonId = null;
+
+  const source = findPersonById(link.sourceId);
+  const target = findPersonById(link.targetId);
+
+  if (!source || !target) {
+    return;
+  }
+
+  detailsPanel.innerHTML = `
+    <h2>Connection</h2>
+
+    <dl>
+      <div>
+        <dt>Between</dt>
+        <dd>${source.name} and ${target.name}</dd>
+      </div>
+
+      <div>
+        <dt>Type</dt>
+        <dd>${link.type}</dd>
+      </div>
+
+      <div>
+        <dt>Strength</dt>
+        <dd>${link.strength || 3} / 5</dd>
+      </div>
+    </dl>
+
+    <div class="details-actions">
+      <button id="edit-link-button" class="secondary-button" type="button">
+        Edit connection
+      </button>
+
+      <button id="delete-link-button" class="danger-button" type="button">
+        Delete connection
+      </button>
+    </div>
+  `;
+
+  const editLinkButton = document.querySelector("#edit-link-button");
+  const deleteLinkButton = document.querySelector("#delete-link-button");
+
+  editLinkButton.addEventListener("click", function () {
+    startEditingLink(link.id);
+  });
+
+  deleteLinkButton.addEventListener("click", function () {
+    deleteLink(link.id);
+  });
+}
+
+function resetDetailsPanel() {
+  detailsPanel.innerHTML = `
+    <h2>Selected item</h2>
+    <p>Click a person or connection on the map to see details here.</p>
+  `;
+}
+
 function startEditingPerson(personId) {
   const person = findPersonById(personId);
 
@@ -322,6 +429,29 @@ function startEditingPerson(personId) {
   cancelEditButton.hidden = false;
 
   const formToggle = addPersonForm.closest(".form-toggle");
+
+  if (formToggle) {
+    formToggle.open = true;
+  }
+}
+
+function startEditingLink(linkId) {
+  const link = findLinkById(linkId);
+
+  if (!link) {
+    return;
+  }
+
+  editingLinkId = link.id;
+
+  linkSourceSelect.value = link.sourceId;
+  linkTargetSelect.value = link.targetId;
+  linkTypeInput.value = link.type;
+  linkStrengthInput.value = link.strength || 3;
+
+  linkSubmitButton.textContent = "Save connection";
+
+  const formToggle = addLinkForm.closest(".form-toggle");
 
   if (formToggle) {
     formToggle.open = true;
@@ -390,11 +520,21 @@ function renderMap() {
 
     if (source && target) {
       const strength = link.strength || 3;
+      const selectedClass = link.id === selectedLinkId ? "selected-link" : "";
 
-      renderLine(source, target, "person-connection-line", {
-        "stroke-width": strength,
-        opacity: 0.25 + strength * 0.12,
-      });
+      renderLine(
+        source,
+        target,
+        `person-connection-line ${selectedClass}`,
+        {
+          "stroke-width": strength,
+          opacity: 0.25 + strength * 0.12,
+        },
+        function () {
+          showLinkDetails(link);
+          renderMap();
+        },
+      );
     }
   });
 
@@ -471,6 +611,29 @@ addLinkForm.addEventListener("submit", function (event) {
 
   if (sourceId === targetId) {
     alert("Please choose two different people.");
+    return;
+  }
+
+  if (editingLinkId) {
+    const link = findLinkById(editingLinkId);
+
+    if (!link) {
+      return;
+    }
+
+    link.sourceId = sourceId;
+    link.targetId = targetId;
+    link.type = formData.get("type") || "connection";
+    link.strength = Number(formData.get("strength"));
+
+    editingLinkId = null;
+    linkSubmitButton.textContent = "Add connection";
+
+    saveLinks();
+    addLinkForm.reset();
+    showLinkDetails(link);
+    renderMap();
+
     return;
   }
 

@@ -31,6 +31,8 @@ body {
   line-height: 1.5;
 }
 
+/* Map panel styles */
+
 .map-panel {
   position: relative;
   overflow: hidden;
@@ -41,9 +43,15 @@ body {
   height: 100vh;
   display: block;
   background:
-    radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 35%),
+    radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.08),
+      transparent 35%
+    ),
     #10111a;
 }
+
+/* Node styles */
 
 .node {
   cursor: pointer;
@@ -67,6 +75,8 @@ body {
   pointer-events: none;
 }
 
+/* Connection line styles */
+
 .connection-line {
   stroke: rgba(255, 255, 255, 0.25);
   stroke-width: 2;
@@ -82,4 +92,101 @@ body {
 
 .category-friend {
   fill: #b9fbc0;
+}
+
+.category-work {
+  fill: #cdb4db;
+}
+
+.category-community {
+  fill: #a0c4ff;
+}
+
+.category-other {
+  fill: #d8e2dc;
+}
+
+/* Details panel styles */
+
+.details-panel {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+}
+
+.details-panel h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.details-panel dl {
+  margin: 0;
+}
+
+.details-panel div {
+  margin-bottom: 1rem;
+}
+
+.details-panel dt {
+  font-size: 0.8rem;
+  color: #aeb0c2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.details-panel dd {
+  margin: 0.25rem 0 0;
+  color: #f5f5f5;
+  line-height: 1.4;
+}
+
+/* Add person form styles */
+
+.person-form {
+  margin-top: 2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.person-form h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.person-form label {
+  font-size: 0.85rem;
+  color: #c9c9d6;
+}
+
+.person-form input,
+.person-form select,
+.person-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: #10111a;
+  color: #f5f5f5;
+  font: inherit;
+}
+
+.person-form textarea {
+  resize: vertical;
+}
+
+.person-form button {
+  margin-top: 0.4rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #ffd166;
+  color: #10111a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.person-form button:hover {
+  filter: brightness(1.05);
 }

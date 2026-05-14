@@ -8,6 +8,41 @@ const me = {
   radius: 42
 };
 
+const people = [
+  {
+    id: "p1",
+    name: "J",
+    category: "partner",
+    x: 560,
+    y: 260,
+    radius: 32
+  },
+  {
+    id: "p2",
+    name: "M",
+    category: "family",
+    x: 260,
+    y: 220,
+    radius: 32
+  },
+  {
+    id: "p3",
+    name: "A",
+    category: "friend",
+    x: 520,
+    y: 420,
+    radius: 32
+  },
+  {
+    id: "p4",
+    name: "H",
+    category: "friend",
+    x: 280,
+    y: 410,
+    radius: 32
+  }
+];
+
 function createSvgElement(tagName, attributes = {}) {
   const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
 
@@ -45,7 +80,12 @@ function renderNode(person, isMe = false) {
 
 function renderMap() {
   svg.innerHTML = "";
+
   renderNode(me, true);
+
+  people.forEach(function (person) {
+    renderNode(person);
+  });
 }
 
 renderMap();

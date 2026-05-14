@@ -70,11 +70,15 @@ function renderNode(person, isMe = false) {
     class: "node"
   });
 
+  const categoryClass = person.category ? `category-${person.category}` : "";
+
   const circle = createSvgElement("circle", {
     cx: person.x,
     cy: person.y,
     r: person.radius,
-    class: isMe ? "node-circle me-circle" : "node-circle"
+    class: isMe
+      ? "node-circle me-circle"
+      : `node-circle ${categoryClass}`
   });
 
   const label = createSvgElement("text", {
